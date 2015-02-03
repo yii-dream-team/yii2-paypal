@@ -1,0 +1,32 @@
+{
+    "name": "yii-dream-team/yii2-paypal",
+    "description": "PayPal component for Yii2",
+    "type": "yii2-extension",
+    "license": "MIT",
+	"keywords": ["yii2", "billing", "payment", "paypal"],
+    "homepage": "http://yiidreamteam.com/yii2/paypal",
+    "authors": [
+        {
+            "name": "Alexey Samoylov",
+            "email": "alexey.samoylov@gmail.com",
+            "homepage": "http://yiidreamteam.com/team/alexey",
+            "role": "Developer"
+        }
+    ],
+    "support": {
+        "issues": "https://github.com/yii-dream-team/yii2-paypal/issues",
+        "source": "https://github.com/yii-dream-team/yii2-paypal"
+    },
+    "minimum-stability": "dev",
+    "require": {
+        "php":">=5.4.0",
+		"yiisoft/yii2": "~2",
+		"ext-curl": "*",
+		"paypal/merchant-sdk-php":"*"
+    },
+    "autoload": {
+        "psr-4": {
+            "yiidreamteam\\paypal\\": "./src"
+        }
+    }
+}
