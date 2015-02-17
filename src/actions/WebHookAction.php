@@ -13,6 +13,7 @@ class ResultAction extends Action
 {
     /** @var Api */
     public $api;
+
     /**
      * @var string
      * @see https://developer.paypal.com/webapps/developer/applications/myapps
