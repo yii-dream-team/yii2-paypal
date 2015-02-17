@@ -9,7 +9,7 @@ use yii\helpers\ArrayHelper;
 use yii\web\BadRequestHttpException;
 use yiidreamteam\paypal\Api;
 
-class ResultAction extends Action
+class WebHookAction extends Action
 {
     /** @var Api */
     public $api;

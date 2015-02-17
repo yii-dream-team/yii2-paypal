@@ -4,10 +4,15 @@
  */
 namespace yiidreamteam\paypal;
 
+use PayPal\Api\Payment;
+use PayPal\Api\PaymentExecution;
 use PayPal\Auth\OAuthTokenCredential;
 use PayPal\Rest\ApiContext;
 use yii\base\Component;
 use yii\helpers\ArrayHelper;
+use yii\web\BadRequestHttpException;
+use yii\web\ServerErrorHttpException;
+use yiidreamteam\paypal\events\GatewayEvent;
 
 /**
  * Class Api
@@ -79,5 +84,43 @@ class Api extends Component
         ], $this->config));
     }
 
+
+    public function processResult($data)
+    {
+        $paymentId = ArrayHelper::getValue($data, 'paymentId');
+        if (!$paymentId)
+            throw new BadRequestHttpException('Missing payment id');
+
+        $payerId = ArrayHelper::getValue($data, 'PayerID');
+        if (!$payerId)
+            throw new BadRequestHttpException('Missing payer id');
+
+        $payment = Payment::get($paymentId, $this->getContext());
+
+        $event = new GatewayEvent([
+            'gatewayData' => $data,
+            'payment' => $payment
+        ]);
+
+        $this->trigger(GatewayEvent::EVENT_PAYMENT_REQUEST, $event);
+        if (!$event->handled)
+            throw new ServerErrorHttpException('Error processing request');
+
+        $transaction = \Yii::$app->getDb()->beginTransaction();
+        try {
+            $paymentExecution = new PaymentExecution();
+            $paymentExecution->setPayerId($payerId);
+            $event->payment = $payment->execute($paymentExecution, $this->getContext());
+            $this->trigger(GatewayEvent::EVENT_PAYMENT_SUCCESS, $event);
+            $transaction->commit();
+        } catch (\Exception $e) {
+            $transaction->rollback();
+            \Yii::error('Payment processing error: ' . $e->getMessage(), 'PayPal');
+            throw new ServerErrorHttpException('Error processing request');
+        }
+
+        return true;
+
+    }
 
 }
