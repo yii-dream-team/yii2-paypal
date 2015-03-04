@@ -50,18 +50,18 @@ class WebHookAction extends Action
     {
         $headers = \Yii::$app->request->headers;
 
-        $signature = ArrayHelper::getValue($headers, 'paypal-transmission-sig');
+        $signature = $headers->get('paypal-transmission-sig');
         if (!$signature)
             throw new BadRequestHttpException;
 
         $checkString = sprintf('%s|%s|%s|%s',
-            ArrayHelper::getValue($headers, 'paypal-transmission-id'),
-            ArrayHelper::getValue($headers, 'paypal-transmission-time'),
+            $headers->get('paypal-transmission-id'),
+            $headers->get('paypal-transmission-time'),
             $this->webHookId,
             crc32(\Yii::$app->request->rawBody)
         );
 
-        $certUrl = ArrayHelper::getValue($headers, 'paypal-cert-url');
+        $certUrl = $headers->get('paypal-cert-url');
         if (!$certUrl)
             throw new BadRequestHttpException;
 
