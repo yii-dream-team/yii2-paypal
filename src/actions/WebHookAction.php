@@ -46,7 +46,7 @@ class WebHookAction extends Action
      * @throws BadRequestHttpException
      * @throws \Exception
      */
-    private function checkSignature()
+    protected function checkSignature()
     {
         $headers = \Yii::$app->request->headers;
 
@@ -81,7 +81,7 @@ class WebHookAction extends Action
      * @param $url
      * @return string|false
      */
-    private function fetchPublicKey($url)
+    protected function fetchPublicKey($url)
     {
         $cache = \Yii::$app->cache;
         $cacheKey = 'paypal-public-key-' . md5($url);
